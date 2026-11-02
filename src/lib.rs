@@ -1,5 +1,5 @@
 pub const SCREEN_WIDTH: usize = 64;
-pub const SCREEN_WEIGHT: usize = 32;
+pub const SCREEN_HEIGHT: usize = 32;
 
 const RAM_SIZE: usize = 4096;
 const REG_SIZE: usize = 16;
@@ -30,7 +30,7 @@ const FONTSET: [u8; FONTSET_SIZE] = [
 pub struct Emu {
     program_counter: u16,
     ram: [u8; RAM_SIZE],
-    screen: [bool; SCREEN_WIDTH * SCREEN_WEIGHT],
+    screen: [bool; SCREEN_WIDTH * SCREEN_HEIGHT],
     v_reg: [u8; REG_SIZE],
     i_reg: u16,
     stack_pointer: u16,
@@ -45,7 +45,7 @@ impl Emu {
         let mut new_emu = Self {
             program_counter: START_ADDR,
             ram: [0; RAM_SIZE],
-            screen: [false; SCREEN_WIDTH * SCREEN_WEIGHT],
+            screen: [false; SCREEN_WIDTH * SCREEN_HEIGHT],
             v_reg: [0; REG_SIZE],
             i_reg: 0,
             stack_pointer: 0,
@@ -68,5 +68,31 @@ impl Emu {
     fn pop(&mut self) -> u16 {
         self.stack_pointer -= 1;
         self.stack[self.stack_pointer as usize]
+    }
+
+    pub fn reset(&mut self) {
+        self.program_counter = START_ADDR;
+        self.ram = [0; RAM_SIZE];
+        self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+        self.v_reg = [0; REG_SIZE];
+        self.i_reg = 0;
+        self.stack_pointer = 0;
+        self.stack =[0; STACK_SIZE];
+        self.keys =[false; NUM_KEYS];
+        self.delay_timer = 0;
+        self.sound_timer = 0;
+        self.ram[..FONTSET_SIZE].copy_from_slice(&FONTSET);
+    }
+
+    pub fn tick(&mut self) {
+        // Fetch
+        let op = self.fetch();
+        // Decode
+        // Execute
+    }
+
+    fn fetch(&mut self) -> u16 {
+        // TODO
+        return 0;
     }
 }
